@@ -1,0 +1,5 @@
+#map {
+    width: 100%;      /* or 800px or any other width */
+    height: 600px;    /* adjust as necessary */
+    position: relative;
+}
