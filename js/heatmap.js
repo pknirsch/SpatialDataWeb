@@ -19,6 +19,35 @@ async function addCelltowersGeoJson(url) {
 addCelltowersGeoJson('geojson/tartu_city_celltowers_edu.geojson');
 
 
+async function addCelltowersHeatmap(url) {
+  const response = await fetch(url);
+  const data = await response.json();
+  const heatPoints = [];
+
+  // Extract coordinates and optionally an intensity value from the GeoJSON features
+  data.features.forEach(feature => {
+    if (feature.geometry && feature.geometry.type === "Point") {
+      const coords = feature.geometry.coordinates;
+      // Assuming the intensity is not provided, we default it to 1. Adjust as necessary.
+      const intensity = 1; 
+      // GeoJSON coordinates are [longitude, latitude]
+      heatPoints.push([coords[1], coords[0], intensity]);
+    }
+  });
+
+
+  // Create and add the heatmap layer
+  const heatLayer = L.heatLayer(heatPoints, {
+    radius: 25,      // Set the radius of each "heat" point
+    blur: 15,        // Set the blur size
+    maxZoom: 17,     // Set the maximum zoom level for scaling the heat radius
+    gradient: {0.4: 'blue', 0.6: 'lime', 0.8: 'yellow', 1
+
+
+
+
+
+
 
 
 // Function to reset the map to default settings
