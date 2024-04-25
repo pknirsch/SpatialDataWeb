@@ -16,7 +16,6 @@ async function addCelltowersHeatmap(url) {
 
   // Extract coordinates and optionally an intensity value from the GeoJSON features
   data.features.forEach(feature => {
-    if (feature.geometry && feature.geometry.type === "Point") {
       const coords = feature.geometry.coordinates;
       // Assuming the intensity is not provided, we default it to 1. Adjust as necessary.
       const intensity = 1; 
