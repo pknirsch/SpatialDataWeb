@@ -21,7 +21,6 @@ async function addCelltowersHeatmap(url) {
       const intensity = 1; 
       // GeoJSON coordinates are [longitude, latitude]
       heatPoints.push([coords[1], coords[0], intensity]);
-    }
   });
 
 
