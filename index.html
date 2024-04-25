@@ -1,0 +1,894 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+        <link rel="stylesheet" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/MarkerCluster.css">
+        <link rel="stylesheet" href="css/MarkerCluster.Default.css">
+        <link rel="stylesheet" href="css/filter.css">
+<link rel="stylesheet" href="css/nouislider.min.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/L.Control.Layers.Tree.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="js/leaflet.markercluster.js"></script>
+        <script src="js/tailDT.js"></script>
+<script src="js/nouislider.min.js"></script>
+<script src="js/wNumb.js"></script>
+        <script src="data/tartu_city_districts_edu_1.js"></script>
+        <script src="data/tartu_city_celltowers_edu_2.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString' || e.target.feature.geometry.type === 'MultiLineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
+        }
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[58.292980961758005,26.687587353283597],[58.422626580647844,26.75633089717075]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        document.querySelector(".leaflet-popup-pane").addEventListener("load", function(event) {
+          var tagName = event.target.tagName,
+            popup = map._popup;
+          // Also check if flag is already set.
+          if (tagName === "IMG" && popup && !popup._updated) {
+            popup._updated = true; // Set flag to prevent looping.
+            popup.update();
+          }
+        }, true);
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_OSMStandard_0');
+        map.getPane('pane_OSMStandard_0').style.zIndex = 400;
+        var layer_OSMStandard_0 = L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            pane: 'pane_OSMStandard_0',
+            opacity: 1.0,
+            attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors, CC-BY-SA</a>',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        });
+        layer_OSMStandard_0;
+        map.addLayer(layer_OSMStandard_0);
+        function pop_tartu_city_districts_edu_1(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (var i in e.target._eventParents) {
+                        if (typeof e.target._eventParents[i].resetStyle === 'function') {
+                            e.target._eventParents[i].resetStyle(e.target);
+                        }
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['OBJECTID'] !== null ? autolinker.link(feature.properties['OBJECTID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>NIMI</strong><br />' + (feature.properties['NIMI'] !== null ? autolinker.link(feature.properties['NIMI'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TOWERS'] !== null ? autolinker.link(feature.properties['TOWERS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_tartu_city_districts_edu_1_0(feature) {
+            if (feature.properties['TOWERS'] >= 15.000000 && feature.properties['TOWERS'] <= 31.200000 ) {
+                return {
+                pane: 'pane_tartu_city_districts_edu_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,204,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['TOWERS'] >= 31.200000 && feature.properties['TOWERS'] <= 72.400000 ) {
+                return {
+                pane: 'pane_tartu_city_districts_edu_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(194,230,153,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['TOWERS'] >= 72.400000 && feature.properties['TOWERS'] <= 86.600000 ) {
+                return {
+                pane: 'pane_tartu_city_districts_edu_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(120,198,121,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['TOWERS'] >= 86.600000 && feature.properties['TOWERS'] <= 158.600000 ) {
+                return {
+                pane: 'pane_tartu_city_districts_edu_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(49,163,84,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['TOWERS'] >= 158.600000 && feature.properties['TOWERS'] <= 427.000000 ) {
+                return {
+                pane: 'pane_tartu_city_districts_edu_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(0,104,55,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_tartu_city_districts_edu_1');
+        map.getPane('pane_tartu_city_districts_edu_1').style.zIndex = 401;
+        map.getPane('pane_tartu_city_districts_edu_1').style['mix-blend-mode'] = 'normal';
+        var layer_tartu_city_districts_edu_1 = new L.geoJson(json_tartu_city_districts_edu_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_tartu_city_districts_edu_1',
+            layerName: 'layer_tartu_city_districts_edu_1',
+            pane: 'pane_tartu_city_districts_edu_1',
+            onEachFeature: pop_tartu_city_districts_edu_1,
+            style: style_tartu_city_districts_edu_1_0,
+        });
+        bounds_group.addLayer(layer_tartu_city_districts_edu_1);
+        map.addLayer(layer_tartu_city_districts_edu_1);
+        function pop_tartu_city_celltowers_edu_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (var i in e.target._eventParents) {
+                        if (typeof e.target._eventParents[i].resetStyle === 'function') {
+                            e.target._eventParents[i].resetStyle(e.target);
+                        }
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td class="visible-with-data" id="radio"colspan="2"><strong>radio</strong><br />' + (feature.properties['radio'] !== null ? autolinker.link(feature.properties['radio'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td class="visible-with-data" id="mcc"colspan="2"><strong>mcc</strong><br />' + (feature.properties['mcc'] !== null ? autolinker.link(feature.properties['mcc'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['net'] !== null ? autolinker.link(feature.properties['net'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['area'] !== null ? autolinker.link(feature.properties['area'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['cell'] !== null ? autolinker.link(feature.properties['cell'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['lon'] !== null ? autolinker.link(feature.properties['lon'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['lat'] !== null ? autolinker.link(feature.properties['lat'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['range'] !== null ? autolinker.link(feature.properties['range'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['samples'] !== null ? autolinker.link(feature.properties['samples'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_tartu_city_celltowers_edu_2_0() {
+            return {
+                pane: 'pane_tartu_city_celltowers_edu_2',
+                radius: 2.0,
+                opacity: 1,
+                color: 'rgba(50,87,128,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(187,209,233,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_tartu_city_celltowers_edu_2');
+        map.getPane('pane_tartu_city_celltowers_edu_2').style.zIndex = 402;
+        map.getPane('pane_tartu_city_celltowers_edu_2').style['mix-blend-mode'] = 'normal';
+        var layer_tartu_city_celltowers_edu_2 = new L.geoJson(json_tartu_city_celltowers_edu_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_tartu_city_celltowers_edu_2',
+            layerName: 'layer_tartu_city_celltowers_edu_2',
+            pane: 'pane_tartu_city_celltowers_edu_2',
+            onEachFeature: pop_tartu_city_celltowers_edu_2,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_tartu_city_celltowers_edu_2_0(feature));
+            },
+        });
+        var cluster_tartu_city_celltowers_edu_2 = new L.MarkerClusterGroup({showCoverageOnHover: false,
+            spiderfyDistanceMultiplier: 2});
+        cluster_tartu_city_celltowers_edu_2.addLayer(layer_tartu_city_celltowers_edu_2);
+
+        bounds_group.addLayer(layer_tartu_city_celltowers_edu_2);
+        cluster_tartu_city_celltowers_edu_2.addTo(map);
+        setBounds();
+        var mapDiv = document.getElementById('map');
+        var row = document.createElement('div');
+        row.className="row";
+        row.id="all";
+        row.style.height = "100%";
+        var col1 = document.createElement('div');
+        col1.className="col9";
+        col1.id = "mapWindow";
+        col1.style.height = "99%";
+        col1.style.width = "80%";
+        col1.style.display = "inline-block";
+        var col2 = document.createElement('div');
+        col2.className="col3";
+        col2.id = "menu";
+        col2.style.display = "inline-block";
+        mapDiv.parentNode.insertBefore(row, mapDiv);
+        document.getElementById("all").appendChild(col1);
+        document.getElementById("all").appendChild(col2);
+        col1.appendChild(mapDiv)
+        var Filters = {"area": "int","range": "int","mcc": "int","net": "int","OBJECTID": "int","samples": "int","cell": "int","lon": "real","TOWERS": "real","lat": "real","radio": "str","NIMI": "str"};
+        function filterFunc() {
+          map.eachLayer(function(lyr){
+          if ("options" in lyr && "dataVar" in lyr["options"]){
+            features = this[lyr["options"]["dataVar"]].features.slice(0);
+            try{
+              for (key in Filters){
+                keyS = key.replace(/[^a-zA-Z0-9_]/g, "")
+                if (Filters[key] == "str" || Filters[key] == "bool"){
+                  var selection = [];
+                  var options = document.getElementById("sel_" + keyS).options
+                  for (var i=0; i < options.length; i++) {
+                    if (options[i].selected) selection.push(options[i].value);
+                  }
+                    try{
+                      if (key in features[0].properties){
+                        for (i = features.length - 1;
+                          i >= 0; --i){
+                          if (selection.indexOf(
+                          features[i].properties[key])<0
+                          && selection.length>0) {
+                          features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                  }
+                }
+                if (Filters[key] == "int"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (parseInt(features[i].properties[key])
+                          < sliderVals[0]
+                          || parseInt(features[i].properties[key])
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "real"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (features[i].properties[key]
+                          < sliderVals[0]
+                          || features[i].properties[key]
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "date"
+                  || Filters[key] == "datetime"
+                  || Filters[key] == "time"){
+                  try{
+                    if (key in features[0].properties){
+                      HTMLkey = key.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/g, '');
+                      startdate = document.getElementById("dat_" +
+                        HTMLkey + "_date1").value.replace(" ", "T");
+                      enddate = document.getElementById("dat_" +
+                        HTMLkey + "_date2").value.replace(" ", "T");
+                      for (i = features.length - 1; i >= 0; --i){
+                        if (features[i].properties[key] < startdate
+                          || features[i].properties[key] > enddate){
+                          features.splice(i,1);
+                        }
+                      }
+                    }
+                  } catch(err){
+                  }
+                }
+              }
+            } catch(err){
+            }
+          this[lyr["options"]["layerName"]].clearLayers();
+          this[lyr["options"]["layerName"]].addData(features);
+          }
+          })
+        }
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_area = document.createElement("div");
+            div_area.id = "div_area";
+            div_area.className = "slider";
+            document.getElementById("menu").appendChild(div_area);
+            var lab_area = document.createElement('div');
+            lab_area.innerHTML  = 'area: <span id="val_area"></span>';
+            lab_area.className = 'filterlabel';
+            document.getElementById("menu").appendChild(lab_area);
+            var reset_area = document.createElement('div');
+            reset_area.innerHTML = 'clear filter';
+            reset_area.className = 'filterlabel';
+            lab_area.className = 'filterlabel';
+            reset_area.onclick = function() {
+                sel_area.noUiSlider.reset();
+            };
+            document.getElementById("menu").appendChild(reset_area);
+            var sel_area = document.getElementById('div_area');
+            noUiSlider.create(sel_area, {
+                connect: true,
+                start: [5, 10009],
+                step: 1,
+                format: wNumb({
+                    decimals: 0,
+                    }),
+                range: {
+                min: 5,
+                max: 10009
+                }
+            });
+            sel_area.noUiSlider.on('update', function (values) {
+            filterVals =[];
+            for (value in values){
+            filterVals.push(parseInt(value))
+            }
+            val_area = document.getElementById('val_area');
+            val_area.innerHTML = values.join(' - ');
+                filterFunc()
+            });
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_range = document.createElement("div");
+            div_range.id = "div_range";
+            div_range.className = "slider";
+            document.getElementById("menu").appendChild(div_range);
+            var lab_range = document.createElement('div');
+            lab_range.innerHTML  = 'range: <span id="val_range"></span>';
+            lab_range.className = 'filterlabel';
+            document.getElementById("menu").appendChild(lab_range);
+            var reset_range = document.createElement('div');
+            reset_range.innerHTML = 'clear filter';
+            reset_range.className = 'filterlabel';
+            lab_range.className = 'filterlabel';
+            reset_range.onclick = function() {
+                sel_range.noUiSlider.reset();
+            };
+            document.getElementById("menu").appendChild(reset_range);
+            var sel_range = document.getElementById('div_range');
+            noUiSlider.create(sel_range, {
+                connect: true,
+                start: [500, 95689],
+                step: 1,
+                format: wNumb({
+                    decimals: 0,
+                    }),
+                range: {
+                min: 500,
+                max: 95689
+                }
+            });
+            sel_range.noUiSlider.on('update', function (values) {
+            filterVals =[];
+            for (value in values){
+            filterVals.push(parseInt(value))
+            }
+            val_range = document.getElementById('val_range');
+            val_range.innerHTML = values.join(' - ');
+                filterFunc()
+            });
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_mcc = document.createElement("div");
+            div_mcc.id = "div_mcc";
+            div_mcc.className = "slider";
+            document.getElementById("menu").appendChild(div_mcc);
+            var lab_mcc = document.createElement('div');
+            lab_mcc.innerHTML  = 'mcc: <span id="val_mcc"></span>';
+            lab_mcc.className = 'filterlabel';
+            document.getElementById("menu").appendChild(lab_mcc);
+            var reset_mcc = document.createElement('div');
+            reset_mcc.innerHTML = 'clear filter';
+            reset_mcc.className = 'filterlabel';
+            lab_mcc.className = 'filterlabel';
+            reset_mcc.onclick = function() {
+                sel_mcc.noUiSlider.reset();
+            };
+            document.getElementById("menu").appendChild(reset_mcc);
+            var sel_mcc = document.getElementById('div_mcc');
+            noUiSlider.create(sel_mcc, {
+                connect: true,
+                start: [248, 249],
+                step: 1,
+                format: wNumb({
+                    decimals: 0,
+                    }),
+                range: {
+                min: 248,
+                max: 249
+                }
+            });
+            sel_mcc.noUiSlider.on('update', function (values) {
+            filterVals =[];
+            for (value in values){
+            filterVals.push(parseInt(value))
+            }
+            val_mcc = document.getElementById('val_mcc');
+            val_mcc.innerHTML = values.join(' - ');
+                filterFunc()
+            });
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_net = document.createElement("div");
+            div_net.id = "div_net";
+            div_net.className = "slider";
+            document.getElementById("menu").appendChild(div_net);
+            var lab_net = document.createElement('div');
+            lab_net.innerHTML  = 'net: <span id="val_net"></span>';
+            lab_net.className = 'filterlabel';
+            document.getElementById("menu").appendChild(lab_net);
+            var reset_net = document.createElement('div');
+            reset_net.innerHTML = 'clear filter';
+            reset_net.className = 'filterlabel';
+            lab_net.className = 'filterlabel';
+            reset_net.onclick = function() {
+                sel_net.noUiSlider.reset();
+            };
+            document.getElementById("menu").appendChild(reset_net);
+            var sel_net = document.getElementById('div_net');
+            noUiSlider.create(sel_net, {
+                connect: true,
+                start: [1, 3],
+                step: 1,
+                format: wNumb({
+                    decimals: 0,
+                    }),
+                range: {
+                min: 1,
+                max: 3
+                }
+            });
+            sel_net.noUiSlider.on('update', function (values) {
+            filterVals =[];
+            for (value in values){
+            filterVals.push(parseInt(value))
+            }
+            val_net = document.getElementById('val_net');
+            val_net.innerHTML = values.join(' - ');
+                filterFunc()
+            });
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_OBJECTID = document.createElement("div");
+            div_OBJECTID.id = "div_OBJECTID";
+            div_OBJECTID.className = "slider";
+            document.getElementById("menu").appendChild(div_OBJECTID);
+            var lab_OBJECTID = document.createElement('div');
+            lab_OBJECTID.innerHTML  = 'OBJECTID: <span id="val_OBJECTID"></span>';
+            lab_OBJECTID.className = 'filterlabel';
+            document.getElementById("menu").appendChild(lab_OBJECTID);
+            var reset_OBJECTID = document.createElement('div');
+            reset_OBJECTID.innerHTML = 'clear filter';
+            reset_OBJECTID.className = 'filterlabel';
+            lab_OBJECTID.className = 'filterlabel';
+            reset_OBJECTID.onclick = function() {
+                sel_OBJECTID.noUiSlider.reset();
+            };
+            document.getElementById("menu").appendChild(reset_OBJECTID);
+            var sel_OBJECTID = document.getElementById('div_OBJECTID');
+            noUiSlider.create(sel_OBJECTID, {
+                connect: true,
+                start: [1, 30],
+                step: 1,
+                format: wNumb({
+                    decimals: 0,
+                    }),
+                range: {
+                min: 1,
+                max: 30
+                }
+            });
+            sel_OBJECTID.noUiSlider.on('update', function (values) {
+            filterVals =[];
+            for (value in values){
+            filterVals.push(parseInt(value))
+            }
+            val_OBJECTID = document.getElementById('val_OBJECTID');
+            val_OBJECTID.innerHTML = values.join(' - ');
+                filterFunc()
+            });
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_samples = document.createElement("div");
+            div_samples.id = "div_samples";
+            div_samples.className = "slider";
+            document.getElementById("menu").appendChild(div_samples);
+            var lab_samples = document.createElement('div');
+            lab_samples.innerHTML  = 'samples: <span id="val_samples"></span>';
+            lab_samples.className = 'filterlabel';
+            document.getElementById("menu").appendChild(lab_samples);
+            var reset_samples = document.createElement('div');
+            reset_samples.innerHTML = 'clear filter';
+            reset_samples.className = 'filterlabel';
+            lab_samples.className = 'filterlabel';
+            reset_samples.onclick = function() {
+                sel_samples.noUiSlider.reset();
+            };
+            document.getElementById("menu").appendChild(reset_samples);
+            var sel_samples = document.getElementById('div_samples');
+            noUiSlider.create(sel_samples, {
+                connect: true,
+                start: [1, 1630],
+                step: 1,
+                format: wNumb({
+                    decimals: 0,
+                    }),
+                range: {
+                min: 1,
+                max: 1630
+                }
+            });
+            sel_samples.noUiSlider.on('update', function (values) {
+            filterVals =[];
+            for (value in values){
+            filterVals.push(parseInt(value))
+            }
+            val_samples = document.getElementById('val_samples');
+            val_samples.innerHTML = values.join(' - ');
+                filterFunc()
+            });
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_cell = document.createElement("div");
+            div_cell.id = "div_cell";
+            div_cell.className = "slider";
+            document.getElementById("menu").appendChild(div_cell);
+            var lab_cell = document.createElement('div');
+            lab_cell.innerHTML  = 'cell: <span id="val_cell"></span>';
+            lab_cell.className = 'filterlabel';
+            document.getElementById("menu").appendChild(lab_cell);
+            var reset_cell = document.createElement('div');
+            reset_cell.innerHTML = 'clear filter';
+            reset_cell.className = 'filterlabel';
+            lab_cell.className = 'filterlabel';
+            reset_cell.onclick = function() {
+                sel_cell.noUiSlider.reset();
+            };
+            document.getElementById("menu").appendChild(reset_cell);
+            var sel_cell = document.getElementById('div_cell');
+            noUiSlider.create(sel_cell, {
+                connect: true,
+                start: [58, 258827275],
+                step: 1,
+                format: wNumb({
+                    decimals: 0,
+                    }),
+                range: {
+                min: 58,
+                max: 258827275
+                }
+            });
+            sel_cell.noUiSlider.on('update', function (values) {
+            filterVals =[];
+            for (value in values){
+            filterVals.push(parseInt(value))
+            }
+            val_cell = document.getElementById('val_cell');
+            val_cell.innerHTML = values.join(' - ');
+                filterFunc()
+            });
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_lon = document.createElement("div");
+            div_lon.id = "div_lon";
+            div_lon.className = "slider";
+            document.getElementById("menu").appendChild(div_lon);
+            var lab_lon = document.createElement('div');
+            lab_lon.innerHTML  = 'lon: <span id="val_lon"></span>';
+            lab_lon.className = 'filterlabel';
+            document.getElementById("menu").appendChild(lab_lon);
+            var reset_lon = document.createElement('div');
+            reset_lon.innerHTML = 'clear filter';
+            reset_lon.className = 'filterlabel';
+            lab_lon.className = 'filterlabel';
+            reset_lon.onclick = function() {
+                sel_lon.noUiSlider.reset();
+            };
+            document.getElementById("menu").appendChild(reset_lon);
+            var sel_lon = document.getElementById('div_lon');
+            noUiSlider.create(sel_lon, {
+                connect: true,
+                start: [26.66926, 26.794453],
+                range: {
+                min: 26.66926,
+                max: 26.794453
+                }
+            });
+            sel_lon.noUiSlider.on('update', function (values) {
+            val_lon = document.getElementById('val_lon');
+            val_lon.innerHTML = values.join(' - ');
+                filterFunc()
+            });
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_TOWERS = document.createElement("div");
+            div_TOWERS.id = "div_TOWERS";
+            div_TOWERS.className = "slider";
+            document.getElementById("menu").appendChild(div_TOWERS);
+            var lab_TOWERS = document.createElement('div');
+            lab_TOWERS.innerHTML  = 'TOWERS: <span id="val_TOWERS"></span>';
+            lab_TOWERS.className = 'filterlabel';
+            document.getElementById("menu").appendChild(lab_TOWERS);
+            var reset_TOWERS = document.createElement('div');
+            reset_TOWERS.innerHTML = 'clear filter';
+            reset_TOWERS.className = 'filterlabel';
+            lab_TOWERS.className = 'filterlabel';
+            reset_TOWERS.onclick = function() {
+                sel_TOWERS.noUiSlider.reset();
+            };
+            document.getElementById("menu").appendChild(reset_TOWERS);
+            var sel_TOWERS = document.getElementById('div_TOWERS');
+            noUiSlider.create(sel_TOWERS, {
+                connect: true,
+                start: [15.0, 427.0],
+                range: {
+                min: 15.0,
+                max: 427.0
+                }
+            });
+            sel_TOWERS.noUiSlider.on('update', function (values) {
+            val_TOWERS = document.getElementById('val_TOWERS');
+            val_TOWERS.innerHTML = values.join(' - ');
+                filterFunc()
+            });
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_lat = document.createElement("div");
+            div_lat.id = "div_lat";
+            div_lat.className = "slider";
+            document.getElementById("menu").appendChild(div_lat);
+            var lab_lat = document.createElement('div');
+            lab_lat.innerHTML  = 'lat: <span id="val_lat"></span>';
+            lab_lat.className = 'filterlabel';
+            document.getElementById("menu").appendChild(lab_lat);
+            var reset_lat = document.createElement('div');
+            reset_lat.innerHTML = 'clear filter';
+            reset_lat.className = 'filterlabel';
+            lab_lat.className = 'filterlabel';
+            reset_lat.onclick = function() {
+                sel_lat.noUiSlider.reset();
+            };
+            document.getElementById("menu").appendChild(reset_lat);
+            var sel_lat = document.getElementById('div_lat');
+            noUiSlider.create(sel_lat, {
+                connect: true,
+                start: [58.339462280273, 58.407237],
+                range: {
+                min: 58.339462280273,
+                max: 58.407237
+                }
+            });
+            sel_lat.noUiSlider.on('update', function (values) {
+            val_lat = document.getElementById('val_lat');
+            val_lat.innerHTML = values.join(' - ');
+                filterFunc()
+            });
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_radio = document.createElement('div');
+            div_radio.id = "div_radio";
+            div_radio.className= "filterselect";
+            document.getElementById("menu").appendChild(div_radio);
+            sel_radio = document.createElement('select');
+            sel_radio.multiple = true;
+            sel_radio.size = 3;
+            sel_radio.id = "sel_radio";
+            var radio_options_str = "<option value='' unselected></option>";
+            sel_radio.onchange = function(){filterFunc()};
+            radio_options_str  += '<option value="GSM">GSM</option>';
+            radio_options_str  += '<option value="LTE">LTE</option>';
+            radio_options_str  += '<option value="UMTS">UMTS</option>';
+            sel_radio.innerHTML = radio_options_str;
+            div_radio.appendChild(sel_radio);
+            var lab_radio = document.createElement('div');
+            lab_radio.innerHTML = 'radio';
+            lab_radio.className = 'filterlabel';
+            div_radio.appendChild(lab_radio);
+            var reset_radio = document.createElement('div');
+            reset_radio.innerHTML = 'clear filter';
+            reset_radio.className = 'filterlabel';
+            reset_radio.onclick = function() {
+                var options = document.getElementById("sel_radio").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_radio.appendChild(reset_radio);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_NIMI = document.createElement('div');
+            div_NIMI.id = "div_NIMI";
+            div_NIMI.className= "filterselect";
+            document.getElementById("menu").appendChild(div_NIMI);
+            sel_NIMI = document.createElement('select');
+            sel_NIMI.multiple = true;
+            sel_NIMI.size = 10;
+            sel_NIMI.id = "sel_NIMI";
+            var NIMI_options_str = "<option value='' unselected></option>";
+            sel_NIMI.onchange = function(){filterFunc()};
+            NIMI_options_str  += '<option value="Annelinna">Annelinna</option>';
+            NIMI_options_str  += '<option value="Ihaste">Ihaste</option>';
+            NIMI_options_str  += '<option value="Jaamamõisa">Jaamamõisa</option>';
+            NIMI_options_str  += '<option value="Karlova">Karlova</option>';
+            NIMI_options_str  += '<option value="Kesklinna">Kesklinna</option>';
+            NIMI_options_str  += '<option value="Kvissentali">Kvissentali</option>';
+            NIMI_options_str  += '<option value="Maarjamõisa">Maarjamõisa</option>';
+            NIMI_options_str  += '<option value="Raadi-Kruusamäe">Raadi-Kruusamäe</option>';
+            NIMI_options_str  += '<option value="Ropka">Ropka</option>';
+            NIMI_options_str  += '<option value="Ropka tööstuse">Ropka tööstuse</option>';
+            NIMI_options_str  += '<option value="Ränilinna">Ränilinna</option>';
+            NIMI_options_str  += '<option value="Supilinna">Supilinna</option>';
+            NIMI_options_str  += '<option value="Tammelinna">Tammelinna</option>';
+            NIMI_options_str  += '<option value="Tähtvere">Tähtvere</option>';
+            NIMI_options_str  += '<option value="Vaksali">Vaksali</option>';
+            NIMI_options_str  += '<option value="Variku">Variku</option>';
+            NIMI_options_str  += '<option value="Veeriku">Veeriku</option>';
+            NIMI_options_str  += '<option value="Ülejõe">Ülejõe</option>';
+            sel_NIMI.innerHTML = NIMI_options_str;
+            div_NIMI.appendChild(sel_NIMI);
+            var lab_NIMI = document.createElement('div');
+            lab_NIMI.innerHTML = 'NIMI';
+            lab_NIMI.className = 'filterlabel';
+            div_NIMI.appendChild(lab_NIMI);
+            var reset_NIMI = document.createElement('div');
+            reset_NIMI.innerHTML = 'clear filter';
+            reset_NIMI.className = 'filterlabel';
+            reset_NIMI.onclick = function() {
+                var options = document.getElementById("sel_NIMI").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_NIMI.appendChild(reset_NIMI);
+        </script>
+    </body>
+</html>
