@@ -41,7 +41,12 @@ async function addCelltowersHeatmap(url) {
     radius: 25,      // Set the radius of each "heat" point
     blur: 15,        // Set the blur size
     maxZoom: 17,     // Set the maximum zoom level for scaling the heat radius
-    gradient: {0.4: 'blue', 0.6: 'lime', 0.8: 'yellow', 1
+    gradient: {0.4: 'blue', 0.6: 'lime', 0.8: 'yellow', 1: 'red'} // Customize color gradient
+  }).addTo(map);
+}
+
+// Call the function with the URL to your GeoJSON file
+addCelltowersHeatmap('geojson/tartu_city_celltowers_edu.geojson');
 
 
 
