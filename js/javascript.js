@@ -7,15 +7,6 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 osm.addTo(map)
 
 
-// add geoJSON polygons layer*
-async function addDistrictsGeoJson(url) {
- const response = await fetch(url)
- const data = await response.json()
- const polygons = L.geoJson(data)
- polygons.addTo(map)
-}
-addDistrictsGeoJson('geojson/tartu_city_districts_edu.geojson')
-
 // add popup to each feature
 function popUPinfo(feature, layer) {
  layer.bindPopup(feature.properties.NIMI)
@@ -26,6 +17,7 @@ async function addDistrictsGeoJson(url) {
  const data = await response.json()
  const polygons = L.geoJson(data, {
  onEachFeature: popUPinfo,
+ style: polygonStyle
  })
  polygons.addTo(map)
 }
@@ -61,50 +53,6 @@ function polygonStyle(feature) {
  }
 }
 
-
-async function addDistrictsGeoJson(url) {
- const response = await fetch(url)
- const data = await response.json()
- const polygons = L.geoJson(data, {
- onEachFeature: popUPinfo,
- style: polygonStyle,
- })
- polygons.addTo(map)
-}
-addDistrictsGeoJson('geojson/tartu_city_districts_edu.geojson')
-
-
-
-// add geoJSON points layer*
-async function addCelltowersGeoJson(url) {
- const response = await fetch(url)
- const data = await response.json()
- const markers = L.geoJson(data)
- markers.addTo(map)
-}
-addCelltowersGeoJson('geojson/tartu_city_celltowers_edu.geojson')
-
-
-function createCircle(feature, latlng) {
- let options = {
- radius: 5,
- fillColor: 'red',
- fillOpacity: 0.5,
- color: 'red',
- weight: 1,
- opacity: 1,
- }
- return L.circleMarker(latlng, options)
-}
-async function addCelltowersGeoJson(url) {
- const response = await fetch(url)
- const data = await response.json()
- const circles = L.geoJson(data, {
- pointToLayer: createCircle,
- })
- circles.addTo(map)
-}
-addCelltowersGeoJson('geojson/tartu_city_celltowers_edu.geojson')
 
 
 // add geoJSON layer
