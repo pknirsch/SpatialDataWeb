@@ -8,35 +8,35 @@ const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 });
 osm.addTo(map);
 
-
+// Asynchronously load and add GeoJSON layer for cell towers, using heatmap
 async function addCelltowersHeatmap(url) {
-  const response = await fetch(url);
-  const data = await response.json();
-  const heatPoints = [];
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    const heatPoints = [];
 
-  // Extract coordinates and optionally an intensity value from the GeoJSON features
-  data.features.forEach(feature => {
+    // Extract coordinates and use the 'range' property as the intensity value from the GeoJSON features
+    data.features.forEach(feature => {
       const coords = feature.geometry.coordinates;
-      // Assuming the intensity is not provided, we default it to 1. Adjust as necessary.
-      const intensity = 1; 
+      const intensity = feature.properties.range; // Using 'range' as the intensity
       // GeoJSON coordinates are [longitude, latitude]
       heatPoints.push([coords[1], coords[0], intensity]);
-  });
+    });
 
-
-  // Create and add the heatmap layer
-  const heatLayer = L.heatLayer(heatPoints, {
-    radius: 10,      // Set the radius of each "heat" point
-    blur: 15,        // Set the blur size
-    maxZoom: 17,     // Set the maximum zoom level for scaling the heat radius
-    gradient: {0.4: 'blue', 0.6: 'lime', 0.8: 'yellow', 1: 'red'} // Customize color gradient
-  }).addTo(map);
+    // Create and add the heatmap layer
+    const heatLayer = L.heatLayer(heatPoints, {
+      radius: 25,      // Adjust the radius of each "heat" point
+      blur: 15,        // Adjust the blur size
+      maxZoom: 17,     // Set the maximum zoom level for scaling the heat radius
+      gradient: {0.4: 'blue', 0.6: 'lime', 0.8: 'yellow', 1: 'red'} // Customize color gradient
+    }).addTo(map);
+  } catch (error) {
+    console.error("Failed to load or process GeoJSON data:", error);
+  }
 }
 
 // Call the function with the URL to your GeoJSON file
 addCelltowersHeatmap('geojson/tartu_city_celltowers_edu.geojson');
-
-
 
 
 
