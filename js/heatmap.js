@@ -25,7 +25,7 @@ async function addCelltowersHeatmap(url) {
 
     // Create and add the heatmap layer
     const heatLayer = L.heatLayer(heatPoints, {
-      radius: 25,      // Adjust the radius of each "heat" point
+      radius: 10,      // Adjust the radius of each "heat" point
       blur: 15,        // Adjust the blur size
       maxZoom: 17,     // Set the maximum zoom level for scaling the heat radius
       gradient: {0.4: 'blue', 0.6: 'lime', 0.8: 'yellow', 1: 'red'} // Customize color gradient
