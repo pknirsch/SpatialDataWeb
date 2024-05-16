@@ -24,7 +24,7 @@ weight: 2,
 fillOpacity: 0.8,
 },
 onEachFeature: function (feature, layer) {
-layer.bindPopup('Towers: ' + feature.properties.TOWERS)
+layer.bindPopup(`District: ${districtName}<br>Towers: ${towerCount}`)
 },
 }).addTo(map)
 }
