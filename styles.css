@@ -4,6 +4,11 @@
     text-decoration: underline;
 }
 
+body {
+  background-color: #d0e2f0;
+}
+
+
 #map {
     height: 700px;
     background-color: #d0e2f0;
