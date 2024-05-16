@@ -1,5 +1,17 @@
-#map {
-    width: 100%;      /* or 800px or any other width */
-    height: 600px;    /* adjust as necessary */
-    position: relative;
+/* styles.css */
+.active {
+    color: blue;
+    text-decoration: underline;
+}
+
+.title h1 {
+    text-align: center;
+    color: black;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.container {
+    padding-left: 5%;
+    padding-right: 5%;
 }
