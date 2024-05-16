@@ -15,7 +15,7 @@ const response = await fetch(url)
 const data = await response.json()
 L.choropleth(data, {
 valueProperty: 'TOWERS',
-scale: ['#ccffff', '#ccffff'],
+scale: ['#ccffff', '#003366'],
 steps: 5,
 mode: 'q', // q for quantile, e for equidistant
 style: {
