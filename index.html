@@ -2,45 +2,46 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
-	<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
- 	<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
-	<link rel="stylesheet" href="styles.css" />	
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+        <link rel="stylesheet" href="styles.css" />
         <title>Web GIS Application</title>
     </head>
     <body>
-	<p>The first paragraph of our first page</p>
-      <!-- Banner -->
-    <div class="banner">
-        <img src="Resized_radio_tower.jpg" alt="Banner Image" style="width:100%; height:auto;">
-    </div>
+        <p>The first paragraph of our first page</p>
+        <!-- Banner -->
+        <div class="banner">
+            <img src="Resized_radio_tower.jpg" alt="Banner Image" style="width:100%; height:auto;">
+        </div>
 
-    <!-- Navbar -->
-    <nav>
-        <a href="index.html" class="active">Basic Map</a>
-        <a href="chloroplethmap.html">Choropleth Map</a>
-        <a href="heatmap.html">Heatmap</a>
-    </nav>
+        <!-- Navbar -->
+        <nav>
+            <a href="index.html" class="active">Basic Map</a>
+            <a href="chloroplethmap.html">Choropleth Map</a>
+            <a href="heatmap.html">Heatmap</a>
+        </nav>
 
-	<button onclick="defaultMapSettings()">Default</button>
-	    
+        <button onclick="defaultMapSettings()">Default</button>
 
-    <!-- Title -->
-    <div class="title">
-        <h1>Map Visualization Project</h1>
-    </div>
+        <!-- Title -->
+        <div class="title">
+            <h1>Map Visualization Project</h1>
+        </div>
 
-    <!-- Container for Map -->
-        <div id="map" style="width: 800px; height: 600px;"></div>
+        <!-- Container for Map -->
+        <div class="container">
+            <div id="map" style="height: 700px;"></div>
+        </div>
 
-
-    <!-- Footer -->
-    <footer>
-        &copy; Philip Milan Knirsch, Tartu University, 2024
-    </footer>
-	<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-	<script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script> 
-	<script src="js/javascript.js"></script> 
+        <!-- Footer -->
+        <footer>
+            &copy; Philip Milan Knirsch, Tartu University, 2024
+        </footer>
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+        <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+        <script src="js/javascript.js"></script>
     </body>
 </html>
+
 
