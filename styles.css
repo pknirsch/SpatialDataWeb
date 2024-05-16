@@ -35,9 +35,13 @@ body {
 }
 
 
-.container {
+container {
     padding: 5%;
     position: relative;
+}
+
+.map-container {
+    border: 5px solid black;
 }
 
 nav {
