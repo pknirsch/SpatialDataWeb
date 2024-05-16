@@ -14,7 +14,7 @@ async function addGeoJson(url) {
 const response = await fetch(url)
 const data = await response.json()
 L.choropleth(data, {
-valueProperty: 'OBJECTID',
+valueProperty: 'TOWERS',
 scale: ['#ffffff', '#ff9900'],
 steps: 5,
 mode: 'q', // q for quantile, e for equidistant
