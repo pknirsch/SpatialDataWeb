@@ -23,8 +23,10 @@ color: '#fff',
 weight: 2,
 fillOpacity: 0.8,
 },
-onEachFeature: function (feature, layer) {
-layer.bindPopup(`District: ${districtName}<br>Towers: ${towerCount}`)
+ onEachFeature: function (feature, layer) {
+      const districtName = feature.properties.NIMI; // Access the district name
+      const towerCount = feature.properties.TOWERS; // Access the number of towers
+      layer.bindPopup(`District: ${districtName}<br>Towers: ${towerCount}`);
 },
 }).addTo(map)
 }
