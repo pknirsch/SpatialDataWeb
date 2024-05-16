@@ -24,6 +24,7 @@ body {
 .container {
     padding-left: 5%;
     padding-right: 5%;
+    background-color: #d0e2f0;
 }
 
 nav a:hover {
