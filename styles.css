@@ -69,7 +69,6 @@ nav a.active, nav a:hover {
     border: none;
     padding: 10px 20px;
     cursor: pointer;
-    position: absolute;
     border-radius: 5px;
 }
 
