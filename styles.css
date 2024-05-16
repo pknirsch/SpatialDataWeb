@@ -15,3 +15,14 @@
     padding-left: 5%;
     padding-right: 5%;
 }
+
+nav a:hover {
+    color: #ff6347;
+}
+
+footer {
+    background: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px 0;
+}
