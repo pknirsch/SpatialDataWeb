@@ -15,7 +15,7 @@ const response = await fetch(url)
 const data = await response.json()
 L.choropleth(data, {
 valueProperty: 'TOWERS',
-scale: ['#ffffff', '#ff9900'],
+scale: ['#ccffff', '#ccffff'],
 steps: 5,
 mode: 'q', // q for quantile, e for equidistant
 style: {
@@ -24,7 +24,7 @@ weight: 2,
 fillOpacity: 0.8,
 },
 onEachFeature: function (feature, layer) {
-layer.bindPopup('District: ' + feature.properties.NIMI + '<br>Towers: ' + feature.properties.TOWERS)
+layer.bindPopup('District: ' + feature.properties.NIMI + '<br>Cell Towers: ' + feature.properties.TOWERS)
 },
 }).addTo(map)
 }
