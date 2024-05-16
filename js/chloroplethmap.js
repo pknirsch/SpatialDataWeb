@@ -12,11 +12,11 @@ osm.addTo(map);
 async function addGeoJson(url) {
   const response = await fetch(url);
   const data = await response.json();
-  
+
   L.choropleth(data, {
-    valueProperty: 'TOWERS',
-    scale: ['#ffffff', '#ff9900'],
-    steps: 5,
+    valueProperty: 'TOWERS', // Feature attribute with quantity of cell towers
+    scale: ['#f7fcf0', '#00441b'], // Colors of the scale (CSS color picker used here)
+    steps: 5, // Quantity of ranges
     mode: 'q', // q for quantile, e for equidistant
     style: {
       color: '#fff',
@@ -29,4 +29,5 @@ async function addGeoJson(url) {
   }).addTo(map);
 }
 
+// Call the function to add GeoJSON data to the map
 addGeoJson('geojson/tartu_city_districts_edu.geojson');
